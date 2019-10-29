@@ -3,7 +3,7 @@ import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import { useState } from "react";
 import moment from "moment";
-import { Box, Grid, AppBar, IconButton, Typography, Button, Paper, Input, InputAdornment, InputLabel } from '@material-ui/core';
+import { Box, Grid, AppBar, IconButton, Typography, Paper, Input, InputAdornment, InputLabel, Drawer } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import MenuIcon from '@material-ui/icons/Menu';
 import { Search } from "@material-ui/icons";
@@ -63,12 +63,11 @@ const useStyles = makeStyles(theme => ({
         borderRadius: '3px'
     },
     cellItem: {
-        width: '304px',
-        display: 'inline-block',
-        paddingLeft: '12px'
+        width: '25%',
+        display: 'inline-block'
     },
     appBar: {
-        backgroundColor: 'black'
+        backgroundColor: '#000'
     },
     paper: {
         padding: theme.spacing(2),
@@ -150,18 +149,23 @@ export default function VisitorDirectory(props) {
         }
     });
     return <>
-        <AppBar position="static">
-            <Toolbar className={classes.appBar}>
-                <IconButton edge="start" className={classes.menuButton} color="white" aria-label="menu">
-                    <MenuIcon />
-                </IconButton>
-                <Typography variant="h5" className={classes.title}>
-                    Company Name
+        <Grid container>
+            <AppBar position="static" className={classes.appBar}>
+                <Toolbar variant="dense">
+                    <IconButton edge="start" className={classes.menuButton} color="default" aria-label="menu">
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h5" className={classes.title}>
+                        Company Name
                 </Typography>
-            </Toolbar>
-        </AppBar>
-        <Grid container spacing={3}>
-            <Grid item xs={12}>
+                </Toolbar>
+            </AppBar>
+
+
+            <Grid item xs={2}>
+
+            </Grid>
+            <Grid item xs={10}>
                 <Paper className={classes.paper}>
                     <InputLabel htmlFor="input-with-icon-adornment"></InputLabel>
                     <Input className={classes.row} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search People"
@@ -173,20 +177,18 @@ export default function VisitorDirectory(props) {
                         }
                     />
                 </Paper>
-            </Grid>
-        </Grid>
-        <Grid xs={12} container>
-            <ReactDataGrid
-                columns={columns}
-                rowRenderer={RowRenderer}
-                toolbar={<Toolbar enableFilter={true} />}
-                rowGetter={i => filteredRows[i]}
-                rowsCount={props.rowsCount}
-                onAddFilter={filter => setFilter(handleFilterChange(filter))}
-                onClearFilters={() => setFilter({})}
-                rowHeight={46}
-                headerRowHeight={46}
-                minHeight={640}
-                getValidFilterValues={columnKey => getValidFilterValues(props.data, columnKey)}
-            /></Grid></>;
+
+                <ReactDataGrid
+                    columns={columns}
+                    rowRenderer={RowRenderer}
+                    toolbar={<Toolbar enableFilter={true} />}
+                    rowGetter={i => filteredRows[i]}
+                    rowsCount={props.rowsCount}
+                    onAddFilter={filter => setFilter(handleFilterChange(filter))}
+                    onClearFilters={() => setFilter({})}
+                    rowHeight={46}
+                    headerRowHeight={46}
+                    minHeight={640}
+                    getValidFilterValues={columnKey => getValidFilterValues(props.data, columnKey)}
+                /></Grid></Grid></>;
 }
