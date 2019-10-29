@@ -39,8 +39,10 @@ function VisitorDirectoryPage({ loadVisitors, visitorsState }) {
     }
     useEffect(() => {
         setDisplay(true);
-        getData(500);
-    }, []);
+        getData(1000);
+    },
+        // eslint-disable-next-line
+        []);
     return <><Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
@@ -51,7 +53,7 @@ function VisitorDirectoryPage({ loadVisitors, visitorsState }) {
         </div>
     </Modal>
 
-        <VisitorDirectory data={visitorsState} rowsCount={500} />
+        <VisitorDirectory data={visitorsState} rowsCount={1000} />
     </>;
 }
 

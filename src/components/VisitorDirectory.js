@@ -46,6 +46,7 @@ const handleFilterChange = filter => filters => {
 };
 
 const useStyles = makeStyles(theme => ({
+
     root: {
         flexGrow: 1,
     },
@@ -112,7 +113,7 @@ const fuzzySearch = (rows, filterTerm) => {
     if (!rows.map) {
         return selectedRows;
     }
-    rows.map(r => {
+    rows.forEach(r => {
         for (let key in rows[0]) {
             if (r[key].toString().toLowerCase().slice().indexOf(filterTerm.toLowerCase()) > -1) {
                 selectedRows.push(r);
@@ -179,6 +180,7 @@ export default function VisitorDirectory(props) {
                 </Paper>
 
                 <ReactDataGrid
+                    enableCellSelect={false}
                     columns={columns}
                     rowRenderer={RowRenderer}
                     toolbar={<Toolbar enableFilter={true} />}
