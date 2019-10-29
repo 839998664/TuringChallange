@@ -1,10 +1,40 @@
 import React from "react";
 import ReactDataGrid from "react-data-grid";
-import { Toolbar, Data } from "react-data-grid-addons";
+import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import { useState } from "react";
 import moment from "moment";
-import Box from '@material-ui/core/Box';
+import { Box, Grid, AppBar, IconButton, Typography, Button, Paper, Input, InputAdornment, InputLabel } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
+import MenuIcon from '@material-ui/icons/Menu';
+import { Search } from "@material-ui/icons";
+
+const {
+    SingleSelectFilter
+} = Filters;
+
+const defaultColumnProperties = {
+    filterable: true,
+    width: '21%'
+};
+let columns = [
+    {
+        key: 'visit_date',
+        name: 'Scheduled',
+        filterRenderer: SingleSelectFilter
+    }, {
+        key: 'visitor_name',
+        name: 'Visitor Name',
+        filterRenderer: SingleSelectFilter
+    }, {
+        key: 'host_name',
+        name: 'Host',
+        filterRenderer: SingleSelectFilter
+    }, {
+        key: 'host_company',
+        name: 'Host Company',
+        filterRenderer: SingleSelectFilter
+    }
+].map(c => ({ ...c, ...defaultColumnProperties }));
 
 const handleFilterChange = filter => filters => {
     const newFilters = { ...filters };
@@ -16,9 +46,18 @@ const handleFilterChange = filter => filters => {
     return newFilters;
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+    root: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
     row: {
-        width: '1280px',
+        width: '99%',
         border: '1px solid #c3c3c3',
         margin: '3px',
         borderRadius: '3px'
@@ -27,8 +66,18 @@ const useStyles = makeStyles({
         width: '304px',
         display: 'inline-block',
         paddingLeft: '12px'
-    }
-})
+    },
+    appBar: {
+        backgroundColor: 'black'
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    }, margin: {
+        margin: theme.spacing(1),
+    },
+}));
 const RowRenderer = ({ row, idx }) => {
     const classes = useStyles();
     const { visit_date, visitor_name, host_name, host_company, day_of_week } = row;
@@ -86,24 +135,12 @@ function getRows(rows, filters) {
 }
 
 export default function VisitorDirectory(props) {
+    const classes = useStyles();
     const [filter, setFilter] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
     const filteredRows = searchTerm ? fuzzySearch(props.data, searchTerm) : getRows(props.data, filter);
     const handleSearch = ({ target }) => {
         setSearchTerm(target.value);
-        /* Object.keys(props.data[0]).map(key => {
-            if (key === 'visitor_name' || key === 'host_name' || key === 'host_company') {
-                if (target.value) {
-                    setFilter(handleFilterChange({
-                        filterTerm: searchTerm,
-                        column: { key }
-                    }));
-                } else {
-                    setFilter({ column: { key } });
-                }
-
-            }
-        }); */
     }
     [].slice.call(filteredRows).sort(function (a, b) {
         if (moment(a.visit_date).isBefore(moment(b.visit_date))) {
@@ -113,18 +150,43 @@ export default function VisitorDirectory(props) {
         }
     });
     return <>
-        <input type="text" onChange={handleSearch} value={searchTerm} />
-        <ReactDataGrid
-            columns={props.columns}
-            rowRenderer={RowRenderer}
-            toolbar={<Toolbar enableFilter={true} />}
-            rowGetter={i => filteredRows[i]}
-            rowsCount={props.rowsCount}
-            onAddFilter={filter => setFilter(handleFilterChange(filter))}
-            onClearFilters={() => setFilter({})}
-            rowHeight={46}
-            headerRowHeight={46}
-            minHeight={640}
-            getValidFilterValues={columnKey => getValidFilterValues(props.data, columnKey)}
-        /></>
+        <AppBar position="static">
+            <Toolbar className={classes.appBar}>
+                <IconButton edge="start" className={classes.menuButton} color="white" aria-label="menu">
+                    <MenuIcon />
+                </IconButton>
+                <Typography variant="h5" className={classes.title}>
+                    Company Name
+                </Typography>
+            </Toolbar>
+        </AppBar>
+        <Grid container spacing={3}>
+            <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                    <InputLabel htmlFor="input-with-icon-adornment"></InputLabel>
+                    <Input className={classes.row} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search People"
+                        id="input-with-icon-adornment"
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        }
+                    />
+                </Paper>
+            </Grid>
+        </Grid>
+        <Grid xs={12} container>
+            <ReactDataGrid
+                columns={columns}
+                rowRenderer={RowRenderer}
+                toolbar={<Toolbar enableFilter={true} />}
+                rowGetter={i => filteredRows[i]}
+                rowsCount={props.rowsCount}
+                onAddFilter={filter => setFilter(handleFilterChange(filter))}
+                onClearFilters={() => setFilter({})}
+                rowHeight={46}
+                headerRowHeight={46}
+                minHeight={640}
+                getValidFilterValues={columnKey => getValidFilterValues(props.data, columnKey)}
+            /></Grid></>;
 }
