@@ -3,9 +3,8 @@ import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import { useState } from "react";
 import moment from "moment";
-import { Box, Grid, AppBar, IconButton, Typography, Paper, Input, InputAdornment, InputLabel, Drawer } from '@material-ui/core';
+import { Box, Grid, AppBar, Typography, Paper, Input, InputAdornment, InputLabel } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
-import MenuIcon from '@material-ui/icons/Menu';
 import { Search } from "@material-ui/icons";
 
 const {
@@ -14,7 +13,7 @@ const {
 
 const defaultColumnProperties = {
     filterable: true,
-    width: '21%'
+    width: '19%'
 };
 let columns = [
     {
@@ -55,9 +54,10 @@ const useStyles = makeStyles(theme => ({
     },
     title: {
         flexGrow: 1,
+        color: '#000'
     },
     row: {
-        width: '99%',
+        width: '98%',
         border: '1px solid #c3c3c3',
         margin: '3px',
         borderRadius: '3px'
@@ -76,6 +76,9 @@ const useStyles = makeStyles(theme => ({
     }, margin: {
         margin: theme.spacing(1),
     },
+    dark: {
+        backgroundColor: '#000'
+    }
 }));
 const RowRenderer = ({ row, idx }) => {
     const classes = useStyles();
@@ -150,11 +153,8 @@ export default function VisitorDirectory(props) {
     });
     return <>
         <Grid container>
-            <AppBar position="static" className={classes.appBar}>
+            <AppBar position="static" className={classes.dark}>
                 <Toolbar variant="dense">
-                    <IconButton edge="start" className={classes.menuButton} color="default" aria-label="menu">
-                        <MenuIcon />
-                    </IconButton>
                     <Typography variant="h5" className={classes.title}>
                         Company Name
                 </Typography>
@@ -188,7 +188,7 @@ export default function VisitorDirectory(props) {
                     onClearFilters={() => setFilter({})}
                     rowHeight={46}
                     headerRowHeight={46}
-                    minHeight={640}
+                    minHeight={520}
                     getValidFilterValues={columnKey => getValidFilterValues(props.data, columnKey)}
                 /></Grid></Grid></>;
 }
