@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import configureStore from "./redux/configureStore";
 import * as serviceWorker from './serviceWorker';
+import VisitorDirectoryPage from './components/VisitorDirectoryPage';
+import { Provider as ReduxProvider } from "react-redux";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = configureStore();
+
+ReactDOM.render(<ReduxProvider store={store}><VisitorDirectoryPage /></ReduxProvider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
