@@ -1,0 +1,6 @@
+react-grid-Cell:focus {
+  outline: "none";
+}
+.rdg-selected {
+  border: none !important;
+}
