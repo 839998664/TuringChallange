@@ -3,7 +3,7 @@ import ReactDataGrid from "react-data-grid";
 import { Toolbar, Data, Filters } from "react-data-grid-addons";
 import { useState } from "react";
 import moment from "moment";
-import { Box, Grid, AppBar, Typography, Paper, Input, InputAdornment, InputLabel } from '@material-ui/core';
+import { Box, Grid, AppBar, Typography, Paper, Input, InputAdornment, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
 import './visitor.directory.css';
@@ -81,7 +81,11 @@ const useStyles = makeStyles(theme => ({
     },
     dark: {
         backgroundColor: '#000'
-    }
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(1),
+        width: '100%'
+    },
 }));
 const RowRenderer = ({ row, idx }) => {
     const classes = useStyles();
@@ -109,6 +113,18 @@ function getValidFilterValues(rows, columnId) {
             });
     }
 
+}
+const dayOfWeekSearch = (rows, filterTerm) => {
+    let selectedRows = [];
+    if (!rows.map) {
+        return selectedRows;
+    }
+    rows.forEach(r => {
+        if (moment(r['visit_date']).format('dddd') === filterTerm) {
+            selectedRows.push({ ...r, visit_date: moment(r['visit_date']).format('hh:mm a'), day_of_week: moment(r['visit_date']).format('dddd') });
+        }
+    });
+    return selectedRows;
 }
 const fuzzySearch = (rows, filterTerm) => {
     let selectedRows = [];
@@ -138,12 +154,25 @@ function getRows(rows, filters) {
 
     return selectors.getRows({ rows, filters });
 }
-
+const day_of_week = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+]
 export default function VisitorDirectory(props) {
     const classes = useStyles();
+
     const [filter, setFilter] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
-    const filteredRows = searchTerm ? fuzzySearch(props.data, searchTerm) : getRows(props.data, filter);
+    const [searchDay, setSearchDay] = useState('');
+    let filteredRows = searchTerm ? fuzzySearch(props.data, searchTerm) : searchDay ? dayOfWeekSearch(props.data, searchDay) : getRows(props.data, filter);
+    const handleDaySearch = ({ target }) => {
+        setSearchDay(target.value);
+    }
     const handleSearch = ({ target }) => {
         setSearchTerm(target.value);
     }
@@ -169,18 +198,31 @@ export default function VisitorDirectory(props) {
 
             </Grid>
             <Grid item xs={10}>
-                <Paper className={classes.paper}>
-                    <InputLabel htmlFor="input-with-icon-adornment"></InputLabel>
-                    <Input className={classes.row} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search People"
-                        id="input-with-icon-adornment"
-                        startAdornment={
-                            <InputAdornment position="start">
-                                <Search />
-                            </InputAdornment>
-                        }
-                    />
-                </Paper>
-
+                <Grid container>
+                    <Grid item xs={10}>
+                        <Paper className={classes.paper}>
+                            <InputLabel htmlFor="input-with-icon-adornment"></InputLabel>
+                            <Input className={classes.row} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search People"
+                                id="input-with-icon-adornment"
+                                startAdornment={
+                                    <InputAdornment position="start">
+                                        <Search />
+                                    </InputAdornment>
+                                }
+                            />
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Paper className={classes.paper} >
+                            <Select className={classes.selectEmpty} value={searchDay} onChange={handleDaySearch} placeholder="Select Day">
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                {day_of_week.map(day => <MenuItem key={day} value={day}>{day}</MenuItem>)}
+                            </Select>
+                        </Paper>
+                    </Grid>
+                </Grid>
                 <ReactDataGrid
                     cellAutoFocusEnabled={false}
                     enableCellSelect={false}
