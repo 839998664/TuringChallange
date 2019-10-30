@@ -6,6 +6,7 @@ import moment from "moment";
 import { Box, Grid, AppBar, Typography, Paper, Input, InputAdornment, InputLabel } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
+import './visitor.directory.css';
 
 const {
     SingleSelectFilter
@@ -13,7 +14,7 @@ const {
 
 const defaultColumnProperties = {
     filterable: true,
-    width: '19%'
+    width: '18%'
 };
 let columns = [
     {
@@ -58,14 +59,15 @@ const useStyles = makeStyles(theme => ({
         color: '#000'
     },
     row: {
-        width: '98%',
+        width: '99%',
         border: '1px solid #c3c3c3',
-        margin: '3px',
+        margin: '4px',
         borderRadius: '3px'
     },
     cellItem: {
         width: '25%',
-        display: 'inline-block'
+        display: 'inline-block',
+        marginBottom: '4px'
     },
     appBar: {
         backgroundColor: '#000'
@@ -180,6 +182,7 @@ export default function VisitorDirectory(props) {
                 </Paper>
 
                 <ReactDataGrid
+                    cellAutoFocusEnabled={false}
                     enableCellSelect={false}
                     columns={columns}
                     rowRenderer={RowRenderer}
